@@ -125,7 +125,11 @@ fi
 while [ "$nds" != 0 ]
 	do
 	# shellcheck disable=SC2019
-	MANNAGGIA="Mannaggia $(curl -s "www.santiebeati.it/$(</dev/urandom tr -dc A-Z|head -c1)/"|grep -a tit|cut -d'>' -f 3-9| sed '/^.$/d' |  grep -vs '</A>' | $shufCmd -n1 |awk -F "$DELSTRING1" '{print$1$2" "$3$4}' | iconv -f ISO-8859-1)"
+	# fix per ripristinare il corretto funzionamento anziche' ricevere il FONT SIZE in output
+	# OLD.MANNAGGIA="Mannaggia $(curl -s "www.santiebeati.it/$(</dev/urandom tr -dc A-Z|head -c1)/"|grep -a tit|cut -d'>' -f 3-9| sed '/^.$/d' |  grep -vs '</A>' | $shufCmd -n1 |awk -F "$DELSTRING1" '{print$1$2" "$3$4}' | iconv -f ISO-8859-1)"
+	# Le due variabili ausiliarie DELSTRING non dovrebbero essere piu' necessarie in quanto rimpiazzate da string substitution, il valore di campi oggetto del comando cut e' stato portato da 4-9 a 3-9 per includere il titolo dell'eventuale santo/beato
+	MANNAGGIA="Mannaggia $(curl -s "www.santiebeati.it/$(</dev/urandom tr -dc A-Z|head -c1)/"|grep -a tit|cut -d'>' -f 3-9|sed 's/<\/FONT> <FONT SIZE="-1"><b>/ /;s/<\/A>//g;s/<\/b>.*$//g;/^[[:space:]]*$/d'|$shufCmd -n1 |iconv -f ISO-8859-1)"
+	
 
 	if [ "$wallflag" = true ]
 		then
